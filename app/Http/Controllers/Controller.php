@@ -58,8 +58,30 @@ class Controller extends BaseController
             $redis=new RedisHandler();
             $redis->redisCmd('set',$key,$authStr);
         }else{
-            setcookie('auth_yue', $authStr, time() + self::cookiesTime, '/', $_SERVER['HTTP_HOST']);
-            setcookie('auth_yue', $authStr, time() + self::cookiesTime, '/', $_SERVER['SERVER_NAME']);
+             setcookie('auth_yue', $authStr, time() + self::cookiesTime, '/', $_SERVER['HTTP_HOST']);
+             setcookie('auth_yue', $authStr, time() + self::cookiesTime, '/', $_SERVER['SERVER_NAME']);
         }
     }
+    
+    
+    /**
+     * 获取用户密钥
+     */
+    public function getUserSecretKey($username)
+    {
+        //获取分钟戳
+        $timestamp=ceil(time()/60);
+        $privateKey=self::PrivateKey;
+        $str="$username|$privateKey|$timestamp";
+        $str=substr(md5($str),0,6);
+        $str=str_split($str);
+        $secret="";
+        foreach ($str as $v){
+            $index=hexdec(bin2hex($v));
+            $index=$index%8;
+            $secret.=$index;
+        }
+        return $secret;
+    }
+
 }
