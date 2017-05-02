@@ -93,4 +93,15 @@ class RedisHandler{
         return $result;
     }
 
+    /**
+     * @param null $key
+     * @return bool
+     */
+    public function isExist($key=null)
+    {
+        if($key==null)
+            return false;
+        return Redis::exists($key);
+    }
+
 }
